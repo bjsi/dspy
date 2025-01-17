@@ -103,6 +103,12 @@ class Example:
         for key in keys:
             del copied[key]
         return copied
+    
+    def hide(self, *keys):
+        copied = self.copy()
+        for key in keys:
+            copied[key] = None
+        return copied
 
     def toDict(self):
         return self._store.copy()

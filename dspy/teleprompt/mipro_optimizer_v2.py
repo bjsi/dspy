@@ -62,6 +62,7 @@ class MIPROv2(Teleprompter):
         track_stats: bool = True,
         log_dir: Optional[str] = None,
         metric_threshold: Optional[float] = None,
+        hide_demo_fields: Optional[List[str]] = None,
     ):
         # Validate 'auto' parameter
         allowed_modes = {None, "light", "medium", "heavy"}
@@ -89,7 +90,7 @@ class MIPROv2(Teleprompter):
         self.metric_threshold = metric_threshold
         self.seed = seed
         self.rng = None
-
+        self.hide_demo_fields = hide_demo_fields
     def compile(
         self,
         student: Any,
@@ -167,6 +168,13 @@ class MIPROv2(Teleprompter):
 
         # Step 1: Bootstrap few-shot examples
         demo_candidates = self._bootstrap_fewshot_examples(program, trainset, seed, teacher)
+
+        # Hide fields from demo candidates
+        if self.hide_demo_fields and demo_candidates:
+            for candidate in demo_candidates:
+                for lst in candidate.values():
+                    for i, example in enumerate(lst):
+                        lst[i] = example.hide(*self.hide_demo_fields)
 
         # Step 2: Propose instruction candidates
         instruction_candidates = self._propose_instructions(
