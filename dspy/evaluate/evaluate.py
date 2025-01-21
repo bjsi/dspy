@@ -116,7 +116,8 @@ class Evaluate:
         results = [(example, prediction, score) for example, (prediction, score) in zip(devset, results)]
         ncorrect, ntotal = sum(score for *_, score in results), len(devset)
 
-        logger.info(f"Average Metric: {ncorrect} / {ntotal} ({round(100 * ncorrect / ntotal, 1)}%)")
+        if self.display_progress:
+            logger.info(f"Average Metric: {ncorrect} / {ntotal} ({round(100 * ncorrect / ntotal, 1)}%)")
             
         def prediction_is_dictlike(prediction):
             # Downstream logic for displaying dictionary-like predictions depends solely on the predictions
